@@ -2,5 +2,6 @@ package org.ecommerce.backend.model;
 
 public enum Role {
     BUYER,
-    SELLER
+    SELLER,
+    ADMIN
 }

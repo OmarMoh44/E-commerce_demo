@@ -23,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 
@@ -68,6 +69,7 @@ public class AuthService {
         emailUtil.sendSimpleMail(emailDetails);
     }
 
+    @Transactional
     public void verifyEmail(VerifyEmailRequest verifyEmailRequest) {
         String redisCodeKey = String.format("verifyEmail:%s", verifyEmailRequest.getEmail());
         String redisUseInfoKey = String.format("userInfo:%s:%s", verifyEmailRequest.getEmail(), verifyEmailRequest.getVerificationCode());
@@ -99,6 +101,7 @@ public class AuthService {
         emailUtil.sendSimpleMail(emailDetails);
     }
 
+    @Transactional
     public void resetPassword(ResetPasswordRequest resetPasswordRequest) {
         String redisCodeKey = String.format("resetPassword:%s", resetPasswordRequest.getEmail());
         String storedCode = (String) redisUtil.getValue(redisCodeKey);

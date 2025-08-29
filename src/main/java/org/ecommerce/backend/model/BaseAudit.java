@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 public abstract class BaseAudit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

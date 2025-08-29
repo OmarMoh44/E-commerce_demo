@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
+    Optional<User> findByEmailAndIsDeletedFalse(String email);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM User u WHERE u.isDeleted = true AND u.deletedDate <= :cutoffDate")

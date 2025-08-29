@@ -38,7 +38,7 @@ public class SecurityConfiguration {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
+        return username -> userRepository.findByEmailAndIsDeletedFalse(username)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage()));
     }
 
@@ -65,7 +65,6 @@ public class SecurityConfiguration {
                                 "/login",
                                 "/register",
                                 "/verify-email",
-                                "/forget-password",
                                 "/forget-password",
                                 "/reset-password",
                                 "/swagger-ui.html",
