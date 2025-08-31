@@ -63,7 +63,7 @@ public class User extends BaseAudit implements UserDetails {
     @Column(name = "delete_date", columnDefinition = "DATE default null")
     private LocalDate deletedDate = null;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Cart cart;
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

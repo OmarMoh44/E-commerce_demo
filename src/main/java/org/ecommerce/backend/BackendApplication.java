@@ -13,13 +13,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAsync
 @EnableJpaAuditing
 public class BackendApplication {
+    // TODO:
     /**
-     * TODO:
-     * add logging and use AOP
      * add caching
-     * when user delete his account, deactivate his products
-     * add email validation on registration using verfication code
-     * add password reset functionality
      * */
     public static void main(String[] args) {
         SpringApplication.run(BackendApplication.class, args);

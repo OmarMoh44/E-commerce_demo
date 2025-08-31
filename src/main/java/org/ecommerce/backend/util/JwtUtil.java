@@ -70,7 +70,7 @@ public class JwtUtil extends OncePerRequestFilter {
             email = jwtService.extractEmail(token);
         }
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = userRepository.findByEmail(email).orElseThrow(
+            User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(
                     () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
             );
 

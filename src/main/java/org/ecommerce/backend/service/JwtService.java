@@ -35,7 +35,7 @@ public class JwtService {
 
     public String generateToken(String email) {
         Map<String, Object> claims = new HashMap<>();
-        User user = userRepository.findByEmail(email).orElseThrow(
+        User user = userRepository.findByEmailAndIsDeletedFalse(email).orElseThrow(
                 () -> new EntityNotFoundException(ErrorMessage.USER_NOT_FOUND.getMessage())
         );
         claims.put("id", user.getId());

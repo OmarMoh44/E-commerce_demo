@@ -1,6 +1,9 @@
 package org.ecommerce.backend.repository;
 
+import org.ecommerce.backend.model.Role;
 import org.ecommerce.backend.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,6 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
     Optional<User> findByEmailAndIsDeletedFalse(String email);
+
+    Page<User> findAllByRoleNot(Role role, Pageable pageable);
 
     @Modifying
     @Transactional

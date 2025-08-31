@@ -14,6 +14,10 @@ import org.ecommerce.backend.repository.ProductRepository;
 import org.ecommerce.backend.util.CategoryUtil;
 import org.ecommerce.backend.util.ProductUtil;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,6 +38,12 @@ public class ProductService {
     private final Validator validator;
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "products", allEntries = true),
+                    @CacheEvict(value = "searched-products", allEntries = true)
+            }
+    )
     public ProductMainView addProduct(AddProductRequest addProductRequest, User user) {
         Product product = modelMapper.map(addProductRequest, Product.class);
         product.setId(null);
@@ -43,17 +53,26 @@ public class ProductService {
         return modelMapper.map(productRepository.save(product), ProductMainView.class);
     }
 
+    @Cacheable(value = "products", key = "#page + '-' + #size")
     public List<ProductMainView> findAllProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("category.name", "name").ascending());
         return productRepository.findAllBy(pageable).getContent();
     }
 
+    @Cacheable(value = "product", key = "#id")
     public ProductMainView findProduct(Long id) {
         Product product = productUtil.verifyProductExist(id);
         return modelMapper.map(product, ProductMainView.class);
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "products", allEntries = true),
+                    @CacheEvict(value = "searched-products", allEntries = true)
+            },
+            put = @CachePut(value = "product", key = "#productId")
+    )
     public ProductMainView updateProduct(User user, Long productId, Map<String, Object> productUpdates) {
         Product product = productUtil.verifyProductExist(productId);
         if(!product.getSeller().getId().equals(user.getId())){
@@ -85,6 +104,15 @@ public class ProductService {
     }
 
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "products", allEntries = true),
+                    @CacheEvict(value = "searched-products", allEntries = true),
+                    @CacheEvict(value = "product", key = "#productId"),
+                    @CacheEvict(value = "cart-items", allEntries = true),
+                    @CacheEvict(value = "cart-item", allEntries = true)
+            }
+    )
     public void deleteProduct(User user, Long productId){
         Product product = productUtil.verifyProductExist(productId);
         if(!product.getSeller().getId().equals(user.getId())){
@@ -94,6 +122,7 @@ public class ProductService {
     }
 
     // Search products by product name, category id, price range.
+    @Cacheable(value = "searched-products", key = "#page + '-' + #size + '-' + #searchParams")
     public List<ProductMainView> searchProducts(Map<String, Object> searchParams, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("category.name", "name").ascending());
 

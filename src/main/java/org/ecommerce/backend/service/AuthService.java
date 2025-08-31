@@ -18,6 +18,8 @@ import org.ecommerce.backend.util.EmailUtil;
 import org.ecommerce.backend.util.RedisUtil;
 import org.ecommerce.backend.util.UserUtil;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -70,6 +72,7 @@ public class AuthService {
     }
 
     @Transactional
+    @Caching(evict = @CacheEvict(value = "users", allEntries = true))
     public void verifyEmail(VerifyEmailRequest verifyEmailRequest) {
         String redisCodeKey = String.format("verifyEmail:%s", verifyEmailRequest.getEmail());
         String redisUseInfoKey = String.format("userInfo:%s:%s", verifyEmailRequest.getEmail(), verifyEmailRequest.getVerificationCode());

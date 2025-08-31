@@ -5,8 +5,11 @@ import org.ecommerce.backend.model.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -27,4 +30,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "and (:minPrice is null or p.price >= :minPrice) " +
             "and (:maxPrice is null or p.price <= :maxPrice)")
     Page<ProductMainView> searchProducts(String productName, List<Long> categoryIds, Double minPrice, Double maxPrice, Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Product p SET p.active = false WHERE p.seller.id IN :sellerIdsList")
+    void deactivateProducts(List<Long> sellerIdsList);
 }
